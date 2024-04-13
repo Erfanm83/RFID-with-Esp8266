@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include "HTTPSRedirect.h"
+#include "Display.h"
 #include <Wire.h>
 #include <PN532_I2C.h>
 #include <PN532.h>
@@ -14,10 +15,12 @@ PN532_I2C pn532_i2c(Wire);
 // int ledpin1 = D5;
 // int ledpin2 = D6;
 NfcAdapter nfc = NfcAdapter(pn532_i2c);
+// Primitive Values
 String tagId1 = "FA 5F 99 1A";
 String tagId2= "39 0B B6 B0";
 String tagId = "None";
 byte nuidPICC[4];
+bool isPend = false;
 
 // Enter network credentials:
 const char* ssid     = "Lucerfan";
@@ -42,14 +45,14 @@ String user = "";
 String id = "";
 String enter ="";
 
-// set the LCD address to 0x27 for a 16 chars and 2 line display
-LiquidCrystal_I2C lcd(0x27,16,2);  
+Display display(isPend);
 
 void setup() {
 
   Serial.begin(9600);        
 
   Serial.println('\n');
+  display.initialize();
   // pinMode(ledpin1,OUTPUT);
   // pinMode(ledpin2,OUTPUT);
   Serial.println("System initialized");
@@ -99,39 +102,20 @@ void setup() {
   }
   delete client;    // delete HTTPSRedirect object
   client = nullptr; // delete HTTPSRedirect object
-
-  lcd.init();
-  lcd.clear();
-  lcd.backlight();      // Make sure backlight is on
   
 }
 
 
 void loop() {
-
-  // Print a message on both lines of the LCD.
-  lcd.setCursor(2,0);   //Set cursor to character 2 on line 0
-  lcd.print("Waiting....");
   
-  for (int i = 0 ; i < 16; i++)
-  {
-    lcd.setCursor(2,i);   //Move cursor to character 2 on line 1
-    lcd.print("close your card");
-  }
+  display.pend(true);
 
-  // create some fake data to publish
+  readNFC();
   // display.clearDisplay();
   // display.setTextSize(2);
   // display.setCursor(0, 10);
-  // display.print("Waiting..."); 
+  // display.print("Success"); 
   // display.display();
-
-  readNFC();
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setCursor(0, 10);
-  display.print("Success"); 
-  display.display();
   if(tagId==tagId1) {    
     // if( digitalRead(ledpin1) == 0) {
       // digitalWrite(ledpin1, HIGH);
