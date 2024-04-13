@@ -21,6 +21,8 @@ String tagId2= "39 0B B6 B0";
 String tagId = "None";
 byte nuidPICC[4];
 bool isPend = false;
+bool IN = false;
+bool IN2 = false;
 
 // Enter network credentials:
 const char* ssid     = "Lucerfan";
@@ -107,68 +109,70 @@ void setup() {
 
 
 void loop() {
-  
-  if(readNFC())
-      display.pend(false , "USERNAME");
-  else 
-      display.pend(true , " ");
 
-  if(tagId==tagId1) {
-    // if( digitalRead(ledpin1) == 0) {
-      // digitalWrite(ledpin1, HIGH);
-      user="Erfan";
-      id="123";
-      enter="in";
-      updatesheet(user,id, enter);
-      tagId = "";
-      delay(1000);
-    // }
-  }
+    if(readNFC()) {
 
-  if(tagId==tagId1) {
-    // if( digitalRead(ledpin1) == 1) {
-      // digitalWrite(ledpin1, LOW);
-      enter="";
-      user="Erfan";
-      id="123";
-      enter="out";
-      updatesheet(user,id, enter);
+        if (tagId==tagId1) {
+            if (IN) {
+                // if( digitalRead(ledpin1) == 1) {
+                // digitalWrite(ledpin1, LOW);
+                enter="";
+                user="Erfan";
+                id="123";
+                enter="out";
+                IN = false;
+                updatesheet(user,id, enter);
+                display.successOUT(user, enter);
+                tagId = "";
+                delay(1000);
+              // }
 
-      tagId = "";
-      delay(1000);
-    // }
-
-  }
-      
-  if(tagId==tagId2) {
-
-    // if( digitalRead(ledpin2) == 0) {
-      // digitalWrite(ledpin2, HIGH);
-      user="";
-      id="";
-      enter="";
-      user="Hossein";
-      id="456";
-      enter="in";
-      updatesheet(user,id, enter);
-
-      tagId = "";
-      delay(1000);
-    // }
-  }
-
-  if(tagId==tagId2) {
-    // if( digitalRead(ledpin2) == 1) {
-      // digitalWrite(ledpin2, LOW);
-       user="Hossein";
-      id="456";
-      enter="out";
-      updatesheet(user,id, enter);
-
-      tagId = "";
-      delay(1000);
-    // }
-  }
+            } else {
+                // if( digitalRead(ledpin1) == 0) {
+                // digitalWrite(ledpin1, HIGH);
+                user="Erfan";
+                id="123";
+                enter="in";
+                IN = true;
+                updatesheet(user,id, enter);
+                tagId = "";
+                display.successIN(user, enter);
+                delay(1000);
+              // }
+            }
+        } else {
+            if (IN2) {
+                // if( digitalRead(ledpin2) == 1) {
+                // digitalWrite(ledpin2, LOW);
+                user="Hossein";
+                id="456";
+                enter="out";
+                IN2 = false;
+                updatesheet(user,id, enter);
+                display.successOUT(user, enter);
+                tagId = "";
+                delay(1000);
+              // }
+            } else {
+                // if( digitalRead(ledpin2) == 0) {
+                // digitalWrite(ledpin2, HIGH);
+                user="";
+                id="";
+                enter="";
+                user="Hossein";
+                id="456";
+                enter="in";
+                IN2 = true;
+                updatesheet(user,id, enter);
+                display.successIN(user, enter);
+                tagId = "";
+                delay(1000);
+              // }
+            }
+        }
+    }
+    else 
+        display.pend();
 }
 
 void updatesheet(String user, String id, String enter) {
@@ -215,8 +219,8 @@ bool readNFC() {
     tagId = tag.getUidString();
     Serial.println("Tag id");
     Serial.println(tagId);
+    delay(1000);
     return true;
   }
-  delay(1000);
   return false;
 }
