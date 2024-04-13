@@ -7,6 +7,9 @@
 #include <PN532_I2C.h>
 #include <PN532.h>
 #include <NfcAdapter.h>
+//added
+#include <LiquidCrystal_I2C.h>
+
 PN532_I2C pn532_i2c(Wire);
 // int ledpin1 = D5;
 // int ledpin2 = D6;
@@ -15,8 +18,6 @@ String tagId1 = "FA 5F 99 1A";
 String tagId2= "39 0B B6 B0";
 String tagId = "None";
 byte nuidPICC[4];
-
-
 
 // Enter network credentials:
 const char* ssid     = "Lucerfan";
@@ -41,13 +42,8 @@ String user = "";
 String id = "";
 String enter ="";
 
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
+// set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x27,16,2);  
 
 void setup() {
 
@@ -104,23 +100,31 @@ void setup() {
   delete client;    // delete HTTPSRedirect object
   client = nullptr; // delete HTTPSRedirect object
 
-display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  delay(2000);
-  display.clearDisplay();
-  display.setTextColor(WHITE);
-  delay(10);
+  lcd.init();
+  lcd.clear();
+  lcd.backlight();      // Make sure backlight is on
   
 }
 
 
 void loop() {
 
+  // Print a message on both lines of the LCD.
+  lcd.setCursor(2,0);   //Set cursor to character 2 on line 0
+  lcd.print("Waiting....");
+  
+  for (int i = 0 ; i < 16; i++)
+  {
+    lcd.setCursor(2,i);   //Move cursor to character 2 on line 1
+    lcd.print("close your card");
+  }
+
   // create some fake data to publish
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setCursor(0, 10);
-  display.print("Waiting..."); 
-  display.display();
+  // display.clearDisplay();
+  // display.setTextSize(2);
+  // display.setCursor(0, 10);
+  // display.print("Waiting..."); 
+  // display.display();
 
   readNFC();
   display.clearDisplay();
