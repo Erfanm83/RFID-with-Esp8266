@@ -16,7 +16,7 @@ PN532_I2C pn532_i2c(Wire);
 // int ledpin2 = D6;
 NfcAdapter nfc = NfcAdapter(pn532_i2c);
 // Primitive Values
-String tagId1 = "FA 5F 99 1A";
+String tagId1 = "69 C9 D2 35";
 String tagId2= "39 0B B6 B0";
 String tagId = "None";
 byte nuidPICC[4];
@@ -108,18 +108,15 @@ void setup() {
 
 void loop() {
   
-  display.pend(true);
+  if(readNFC())
+      display.pend(false , "USERNAME");
+  else 
+      display.pend(true , " ");
 
-  readNFC();
-  // display.clearDisplay();
-  // display.setTextSize(2);
-  // display.setCursor(0, 10);
-  // display.print("Success"); 
-  // display.display();
-  if(tagId==tagId1) {    
+  if(tagId==tagId1) {
     // if( digitalRead(ledpin1) == 0) {
       // digitalWrite(ledpin1, HIGH);
-      user="Fahad";
+      user="Erfan";
       id="123";
       enter="in";
       updatesheet(user,id, enter);
@@ -132,7 +129,7 @@ void loop() {
     // if( digitalRead(ledpin1) == 1) {
       // digitalWrite(ledpin1, LOW);
       enter="";
-      user="Fahad";
+      user="Erfan";
       id="123";
       enter="out";
       updatesheet(user,id, enter);
@@ -150,7 +147,7 @@ void loop() {
       user="";
       id="";
       enter="";
-      user="Fawad";
+      user="Hossein";
       id="456";
       enter="in";
       updatesheet(user,id, enter);
@@ -163,7 +160,7 @@ void loop() {
   if(tagId==tagId2) {
     // if( digitalRead(ledpin2) == 1) {
       // digitalWrite(ledpin2, LOW);
-       user="Fawad";
+       user="Hossein";
       id="456";
       enter="out";
       updatesheet(user,id, enter);
@@ -211,13 +208,15 @@ void updatesheet(String user, String id, String enter) {
   delay(5000);
   }
 
-void readNFC() {
+bool readNFC() {
   if (nfc.tagPresent()) {
     NfcTag tag = nfc.read();
     tag.print();
     tagId = tag.getUidString();
     Serial.println("Tag id");
     Serial.println(tagId);
+    return true;
   }
   delay(1000);
+  return false;
 }

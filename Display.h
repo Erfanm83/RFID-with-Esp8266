@@ -12,9 +12,8 @@ class Display
         bool isPend;
         int k;
         
-        Display (bool ispend)
-        {
-            this-> isPend = ispend;   
+        Display(bool ispend) : lcd(0x27, 16, 2) {
+            this->isPend = ispend;
         }
 
         void initialize() {
@@ -24,12 +23,15 @@ class Display
             lcd.backlight();      // Make sure backlight is on
         }
 
-        void pend (bool ispend)
+        void pend (bool ispend , String username)
         {
             // Print a message on both lines of the LCD.
             lcd.setCursor(UpWordThreshold , 0);   //Set cursor to character 2 on line 0
+            if (!ispend) {
+                upWord = "Welcome";
+                downWord = username;
+            }
             lcd.print(upWord);
-
             lcd.setCursor(0 , 1);
             lcd.print("                ");
             // Access each character in the string using indexing
@@ -54,4 +56,5 @@ class Display
             delay(100);
 
         }
+
 };
