@@ -87,7 +87,7 @@ class Display
 
         void successOUT(String username, String status)
         {
-            upWord = "See Tou Later;)";
+            upWord = "See You Later;)";
             downWord = "  " + username + "   #" + status;
             UpWordThreshold = 1;
 

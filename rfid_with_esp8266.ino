@@ -124,7 +124,7 @@ void loop() {
                 updatesheet(user,id, enter);
                 display.successOUT(user, enter);
                 tagId = "";
-                delay(1000);
+                delay(500);
               // }
 
             } else {
@@ -137,7 +137,7 @@ void loop() {
                 updatesheet(user,id, enter);
                 tagId = "";
                 display.successIN(user, enter);
-                delay(1000);
+                delay(500);
               // }
             }
         } else {
@@ -151,7 +151,7 @@ void loop() {
                 updatesheet(user,id, enter);
                 display.successOUT(user, enter);
                 tagId = "";
-                delay(1000);
+                delay(500);
               // }
             } else {
                 // if( digitalRead(ledpin2) == 0) {
@@ -166,7 +166,7 @@ void loop() {
                 updatesheet(user,id, enter);
                 display.successIN(user, enter);
                 tagId = "";
-                delay(1000);
+                delay(500);
               // }
             }
         }
@@ -209,7 +209,7 @@ void updatesheet(String user, String id, String enter) {
   }
 
   // a delay of several seconds is required before publishing again    
-  delay(5000);
+  delay(1000);
   }
 
 bool readNFC() {
@@ -217,6 +217,26 @@ bool readNFC() {
     NfcTag tag = nfc.read();
     tag.print();
     tagId = tag.getUidString();
+    Serial.println("tag details :");
+    String content= "";
+    byte myByte[] = {0x00, 0xFF};
+    // const unsigned char* myByte_ptr = myByte;
+    Serial.println();
+    tag.getUid(myByte, tag.getUidLength());
+    for (int i = 0 ; i < tag.getUidLength() ; i++) {
+        Serial.println(myByte[i]);
+    }
+    // tag.getUid(byte *uid, unsigned int uidLength)
+    // for (byte i = 0; i < tag.getUidLength(); i++) 
+    // {
+    //     Serial.print(tag.getUid(i, tag.getUidLength()) < 0x10 ? " 0" : " ");
+    //     Serial.print(tag.getUid(i, tag.getUidLength()), HEX);
+    //     content.concat(String(tag.getUid(i, tag.getUidLength()) < 0x10 ? " 0" : " "));
+    //     content.concat(String(tag.getUid(i, tag.getUidLength()), HEX));
+    // }
+    content.toUpperCase();
+    tag.print();
+    // Serial.println("Tag UID : " + tag.print() + " ");
     Serial.println("Tag id");
     Serial.println(tagId);
     delay(1000);
